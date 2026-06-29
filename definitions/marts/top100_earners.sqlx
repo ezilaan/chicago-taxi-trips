@@ -1,0 +1,13 @@
+config {
+   type: "table",
+   schema: "marts"
+}
+
+SELECT
+    taxi_id,
+    SUM(trip_total) AS total_earned
+FROM
+  ${ref("stg_taxi_trips")}
+GROUP BY taxi_id
+ORDER BY total_earned DESC
+LIMIT 100
