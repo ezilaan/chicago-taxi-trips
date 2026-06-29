@@ -11,7 +11,8 @@ SELECT
     tips,
     trip_total,
     company,
-    payment_type
+    payment_type,
+    EXTRACT (DATE FROM trip_start_timestamp) AS trip_date
 FROM
   ${ref("taxi_trips")}
 WHERE
