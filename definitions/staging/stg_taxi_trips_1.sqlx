@@ -1,0 +1,23 @@
+config {
+  type: "view",
+  schema: "staging"
+}
+SELECT
+    unique_key,
+    taxi_id,
+    trip_seconds,
+    trip_start_timestamp,
+    trip_end_timestamp,
+    trip_miles,
+    fare,
+    tips,
+    trip_total,
+    company,
+    payment_type,
+    EXTRACT (DATE FROM trip_start_timestamp) AS trip_date
+FROM
+  ${ref("taxi_trips")}
+WHERE
+    tips > 0
+AND fare > 0
+AND trip_total > 0
