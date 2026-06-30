@@ -1,0 +1,15 @@
+config {
+   type: "table",
+   schema: "marts"
+}
+
+SELECT
+    trip_month,
+    trip_year,
+    COUNT(*) AS total_trips
+FROM
+   ${ref("stg_taxi_trips_2")}
+WHERE
+   trip_year = 2021
+GROUP BY trip_year, trip_month
+ORDER BY trip_month ASC
