@@ -9,7 +9,5 @@ SELECT
     COUNT(*) AS total_trips
 FROM
    ${ref("stg_taxi_trips_2")}
-WHERE
-   trip_year = 2021
 GROUP BY trip_year, trip_month
-ORDER BY trip_month ASC
+ORDER BY trip_year, trip_month ASC
