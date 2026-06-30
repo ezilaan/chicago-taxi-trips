@@ -5,12 +5,12 @@ config {
 
 SELECT
     company,
-    ROUND(SUM(trip_total), 2) AS total_earned,
+    ROUND(AVG(trip_total), 2) AS avg_total_earned,
     payment_type,
     ROUND(AVG(trip_miles), 2) AS avg_trip_miles
 FROM
    ${ref("stg_taxi_trips_2")}
 WHERE company IS NOT NULL AND trip_miles > 0
 GROUP BY company, payment_type
-ORDER BY total_earned DESC
+ORDER BY avg_total_earned DESC
 LIMIT 50
