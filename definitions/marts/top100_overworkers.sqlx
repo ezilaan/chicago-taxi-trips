@@ -3,13 +3,26 @@ config {
    schema: "marts"
 }
 
+WITH trips_taken AS (
+   SELECT
+   taxi_id,
+   trip_start_timestamp,
+   trip_end_timestamp,
+   trip_seconds,
+   LEAD(trip_start_timestamp) OVER(
+      PARTITION BY taxi_id
+      ORDER BY trip_start_timestamp
+   ) AS start_of_next_trip
+   FROM   ${ref("stg_taxi_trips_1")}
+)
+
 SELECT
     taxi_id,
     COUNT (*) AS total_trips,
-    TIMESTAMP_DIFF(MAX(trip_end_timestamp), MIN(trip_start_timestamp), HOUR) AS total_active_hours,
+    COUNTIF(TIMESTAMP_DIFF(start_of_next_trip, trip_end_timestamp, HOUR) <=8) AS rest_not_taken,
     ROUND(SUM(trip_seconds) / 3600, 2) AS total_trip_hours
 FROM
-  ${ref("stg_taxi_trips_1")}
+  trips_taken
 GROUP BY taxi_id
-ORDER BY total_trip_hours DESC
+ORDER BY rest_not_taken DESC
 LIMIT 100
