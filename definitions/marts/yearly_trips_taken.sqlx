@@ -1,0 +1,13 @@
+config {
+   type: "table",
+   schema: "marts"
+}
+
+SELECT
+    trip_year,
+    COUNT(*) as total_trips,
+    ROUND(AVG(trip_total), 2) AS avg_trip_total
+FROM
+   ${ref("stg_taxi_trips_2")}
+GROUP BY trip_year
+ORDER BY trip_year ASC
