@@ -3,11 +3,25 @@ config {
    schema: "marts"
 }
 
+WITH trips_daily_2019 AS (
+   SELECT
+   trip_date,
+   COUNT(*) AS total_trips
+   FROM   ${ref("stg_taxi_trips_2")}
+   WHERE trip_year = 2019
+   GROUP BY trip_date
+)
+
 SELECT
-    trip_month,
-    trip_year,
-    COUNT(*) AS total_trips
+   CASE
+      WHEN trip_date IN ('2019-01-01', '2019-07-04', '2019-11-28', '2019-12-25')
+      THEN 'Public Holiday'
+      ELSE 'Normal Day'
+   END AS type_of_day,
+   ROUND(AVG(total_trips) , 2) AS avg_total_trips
 FROM
-   ${ref("stg_taxi_trips_2")}
-GROUP BY trip_year, trip_month
-ORDER BY trip_year, trip_month ASC
+   trips_daily_2019
+GROUP BY trip_date
+ORDER BY trip_date ASC
+
+
